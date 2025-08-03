@@ -3,6 +3,9 @@ import { supabase } from '../lib/supabase';
 import { useNavigate } from 'react-router-dom';
 import '../styles/NotesPage.css';
 
+const API_BASE = import.meta.env.VITE_API_BASE_URL;
+//const API_BASE = "http://localhost:5000";
+
 type Note = {
   id: string;
   title: string;
@@ -24,18 +27,25 @@ export default function NotesPage() {
         navigate('/');
         return;
       }
+    await supabase.auth.refreshSession(); 
     const { data: { session } } = await supabase.auth.getSession();
-    const res = await fetch('http://localhost:5000/api/notes', {
+    const res = await fetch(`${API_BASE}/api/notes`, {
     headers: {
         'Authorization': `Bearer ${session?.access_token}`
     },
     });
 
       const json = await res.json();
+
+      if (!res.ok) {
+        console.error('🚨 Failed to load notes:', json.error || json);
+        setNotes([]);
+        setLoading(false);
+        return;
+      }
       setNotes(json);
       setLoading(false);
     }
-
     loadNotes();
   }, [navigate]);
 
@@ -44,7 +54,7 @@ export default function NotesPage() {
     const { data: user } = await supabase.auth.getUser();
     if (!user?.user?.id) return;
  const { data: { session } } = await supabase.auth.getSession();
-    const res = await fetch('http://localhost:5000/api/notes', {
+    const res = await fetch(`${API_BASE}/api/notes`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -63,7 +73,7 @@ export default function NotesPage() {
     const { data: user } = await supabase.auth.getUser();
     if (!user?.user?.id) return;
  const { data: { session } } = await supabase.auth.getSession();
-    await fetch(`http://localhost:5000/api/notes/${id}`, {
+    await fetch(`${API_BASE}/api/notes/${id}`, {
       method: 'DELETE',
       headers: {
          'Authorization': `Bearer ${session?.access_token}`

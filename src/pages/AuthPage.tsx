@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { supabase } from '../lib/supabase';
 import { useNavigate } from 'react-router-dom';
-
+import '../styles/AuthPage.css';
 export default function AuthPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -28,6 +28,7 @@ export default function AuthPage() {
         <input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Password" />
         <button type="submit">{isLogin ? 'Login' : 'Sign Up'}</button>
       </form>
+      <br />
       <button onClick={() => setIsLogin(!isLogin)}>
         {isLogin ? 'Need an account? Sign up' : 'Have an account? Log in'}
       </button>
