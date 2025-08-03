@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { supabase } from '../lib/supabase';
+import { useNavigate } from 'react-router-dom';
 
 export default function AuthPage() {
   const [email, setEmail] = useState('');
@@ -7,13 +8,16 @@ export default function AuthPage() {
   const [isLogin, setIsLogin] = useState(true);
   const [error, setError] = useState('');
 
+  const navigate = useNavigate();
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError('');
     const { error } = isLogin
       ? await supabase.auth.signInWithPassword({ email, password })
       : await supabase.auth.signUp({ email, password });
-    if (error) setError(error.message);
+    if (error) setError(error.message)
+    else navigate('/notes');
   }
 
   return (
