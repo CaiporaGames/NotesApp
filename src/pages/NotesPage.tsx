@@ -22,7 +22,7 @@ export default function NotesPage() {
     
   useEffect(() => {
     async function loadNotes() {
-      const { data: user, error } = await supabase.auth.getUser();
+      const { data: user } = await supabase.auth.getUser();
       if (!user?.user?.id) {
         navigate('/');
         return;
